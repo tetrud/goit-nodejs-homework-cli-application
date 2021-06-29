@@ -1,7 +1,21 @@
-const shortid = require('shortid')
+const { v4 } = require('uuid')
+const fs = require('fs').promises
+const path = require('path')
 
-const readFile = require('./readFile')
-const writeFile = require('./writeFile')
+const contactsPath = path.join(__dirname, './db/contacts.json')
+
+///////////////////////////////////////////////
+
+async function readFile() {
+  const data = await fs.readFile(contactsPath)
+  const contacts = JSON.parse(data)
+  return contacts
+}
+
+async function writeFile(data) {
+  const dataString = JSON.stringify(data)
+  await fs.writeFile(contactsPath, dataString)
+}
 
 //////////////////////////////////////////////
 
@@ -58,7 +72,8 @@ async function removeContact(contactId) {
 ///////////////////////////////////////
 
 async function addContact(name, email, phone) {
-  const id = shortid.generate()
+  const randomId = v4()
+  const id = Number(randomId.replace(/[^+\d]/g, ''))
   const newContact = { id, name, email, phone }
 
   try {
